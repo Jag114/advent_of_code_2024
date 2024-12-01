@@ -4,6 +4,7 @@ function readData(wordLength) {
   let left = [];
   let right = [];
   let clearData = [];
+  let completeData = [];
   try {
     const data = fs.readFileSync("day1_input.txt", "utf8");
 
@@ -21,12 +22,27 @@ function readData(wordLength) {
       }
       return false;
     });
-    console.log(clearData)//cut word after wordLength
+
+    let word = "";
+    for (let x = 0; x < clearData.length; x++) {
+      if (x % wordLength == 0 && word.length > 0) {
+        completeData.push(word);
+        word = "";
+      }
+      word += clearData[x];
+    }
+    completeData.push(word);
+    completeData = completeData.map((e) => {
+      return Number(e, 10);
+    });
+    
     for (let i = 0; i < clearData.length; i++) {
-      if (i % 2 == 0) {
-        left.push(clearData[i]);
-      } else {
-        right.push(clearData[i]);
+      if (completeData[i] !== undefined) {
+        if (i % 2 == 0) {
+          left.push(completeData[i]);
+        } else {
+          right.push(completeData[i]);
+        }
       }
     }
   } catch (err) {
@@ -36,10 +52,19 @@ function readData(wordLength) {
 }
 
 let [left, right] = readData(5);
-let sum = 0;
+let similarity = 0;
 left.sort();
 right.sort();
 for (let i = 0; i < left.length; i++) {
-  sum += Math.abs(left[i] - right[i]);
+  //change for part1
+  /*
+  similarity += Math.abs(left[i] - right[i]);
+  */
+  const chosenNr = left[i];
+  let copyCount = 0;
+  for(let j = 0; j < right.length; j++){
+    if(chosenNr == right[j]) copyCount++;
+  }
+  similarity += chosenNr * copyCount;
 }
-console.log(sum)
+console.log(similarity);
